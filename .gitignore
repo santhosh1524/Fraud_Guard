@@ -1,4 +1,6 @@
+# =========================
 # Logs
+# =========================
 logs
 *.log
 npm-debug.log*
@@ -7,18 +9,44 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# =========================
+# Environment variables
+# =========================
+.env
+.env.*
+!.env.example
+
+# =========================
+# Dependencies & build
+# =========================
 node_modules
 dist
 dist-ssr
+.vite
+
+# =========================
+# Local configs
+# =========================
 *.local
 
-# Editor directories and files
+# =========================
+# Editor directories
+# =========================
 .vscode/*
 !.vscode/extensions.json
 .idea
-.DS_Store
 *.suo
 *.ntvs*
 *.njsproj
 *.sln
 *.sw?
+
+# =========================
+# OS files
+# =========================
+.DS_Store
+
+# =========================
+# Supabase
+# =========================
+.supabase
