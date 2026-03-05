@@ -71,10 +71,10 @@ const RecentTransactions = () => {
                       {txn.transaction_id}
                     </td>
                     <td className="py-3 px-4 text-sm text-muted-foreground">
-                      {txn.merchant || "—"}
+                      {txn.category || "—"}
                     </td>
                     <td className="py-3 px-4 text-sm font-medium text-foreground">
-                      ${Number(txn.amount).toLocaleString()}
+                      ₹{Number(txn.amount).toLocaleString()}
                     </td>
                     <td className="py-3 px-4 text-sm text-muted-foreground">
                       {new Date(txn.created_at).toLocaleString()}

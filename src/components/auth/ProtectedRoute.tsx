@@ -9,7 +9,7 @@ interface ProtectedRouteProps {
 }
 
 const ProtectedRoute = ({ children, requireAdmin, requireAnalyst }: ProtectedRouteProps) => {
-  const { user, isLoading, isAdmin, isAnalyst } = useAuth();
+  const { user, isLoading, isAnalyst } = useAuth();
   const location = useLocation();
 
   if (isLoading) {
@@ -27,11 +27,11 @@ const ProtectedRoute = ({ children, requireAdmin, requireAnalyst }: ProtectedRou
     return <Navigate to="/auth" state={{ from: location }} replace />;
   }
 
-  if (requireAdmin && !isAdmin) {
+  if (requireAdmin) {
     return <Navigate to="/dashboard" replace />;
   }
 
-  if (requireAnalyst && !isAdmin && !isAnalyst) {
+  if (requireAnalyst && !isAnalyst) {
     return <Navigate to="/dashboard" replace />;
   }
 

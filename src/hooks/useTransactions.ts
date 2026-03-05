@@ -1,47 +1,43 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Json } from "@/integrations/supabase/types";
+import type { Tables, TablesInsert, Json } from "@/integrations/supabase/types";
 
-export interface Transaction {
-  id: string;
-  transaction_id: string;
-  user_id: string | null;
-  amount: number;
-  merchant: string | null;
-  category: string | null;
-  location: string | null;
-  device_type: string | null;
-  ip_address: string | null;
-  transaction_type: string | null;
-  status: string;
-  fraud_status: string;
-  fraud_probability: number | null;
-  risk_level: string | null;
-  anomaly_score: number | null;
-  prediction_factors: Json | null;
-  created_at: string;
-  analyzed_at: string | null;
-}
+/* =========================================================
+   TYPES
+========================================================= */
 
+export type Transaction = Tables<"transactions">;
+type CreateTransactionInput = TablesInsert<"transactions">;
+
+/* =========================================================
+   GET TRANSACTIONS
+========================================================= */
 export const useTransactions = () => {
   return useQuery({
     queryKey: ["transactions"],
     queryFn: async () => {
+      console.log("Fetching transactions...");
+
       const { data, error } = await supabase
         .from("transactions")
         .select("*")
         .order("created_at", { ascending: false })
         .limit(100);
 
-      if (error) {
-        throw error;
-      }
+      console.log("DATA:", data);
+      console.log("ERROR:", error);
 
-      return data as Transaction[];
+      if (error) throw error;
+
+      return data ?? [];
     },
   });
 };
+
+/* =========================================================
+   STATS
+========================================================= */
 
 export const useTransactionStats = () => {
   return useQuery({
@@ -52,42 +48,32 @@ export const useTransactionStats = () => {
         .select("fraud_status, risk_level, amount");
 
       if (error) {
+        console.error("Stats fetch error:", error);
         throw error;
       }
 
-      const total = data.length;
-      const fraud = data.filter((t) => t.fraud_status === "fraud").length;
-      const anomaly = data.filter((t) => t.fraud_status === "anomaly").length;
-      const normal = data.filter((t) => t.fraud_status === "normal").length;
+      const transactions = data ?? [];
+
+      const total = transactions.length;
+      const fraud = transactions.filter((t) => t.fraud_status === "fraud").length;
+      const anomaly = transactions.filter((t) => t.fraud_status === "anomaly").length;
+      const normal = transactions.filter((t) => t.fraud_status === "normal").length;
 
       return {
         total,
         fraud,
         anomaly,
         normal,
-        fraudRate: total > 0 ? (fraud / total) * 100 : 0,
-        anomalyRate: total > 0 ? (anomaly / total) * 100 : 0,
+        fraudRate: total ? (fraud / total) * 100 : 0,
+        anomalyRate: total ? (anomaly / total) * 100 : 0,
       };
     },
   });
 };
 
-interface CreateTransactionInput {
-  transaction_id: string;
-  amount: number;
-  merchant?: string;
-  category?: string;
-  location?: string;
-  device_type?: string;
-  ip_address?: string;
-  transaction_type?: string;
-  status?: string;
-  fraud_status?: string;
-  fraud_probability?: number;
-  risk_level?: string;
-  anomaly_score?: number;
-  prediction_factors?: Json;
-}
+/* =========================================================
+   CREATE TRANSACTION
+========================================================= */
 
 export const useCreateTransaction = () => {
   const queryClient = useQueryClient();
@@ -97,25 +83,26 @@ export const useCreateTransaction = () => {
     mutationFn: async (transaction: CreateTransactionInput) => {
       const { data, error } = await supabase
         .from("transactions")
-        .insert([transaction])
+        .insert(transaction)
         .select()
         .single();
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       return data;
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["transaction-stats"] });
+
       toast({
         title: "Transaction Created",
         description: "The transaction has been successfully recorded.",
       });
     },
-    onError: (error) => {
+
+    onError: (error: any) => {
       toast({
         title: "Error",
         description: error.message,
@@ -125,14 +112,17 @@ export const useCreateTransaction = () => {
   });
 };
 
+/* =========================================================
+   UPDATE TRANSACTION
+========================================================= */
+
 interface UpdateTransactionInput {
   id: string;
   fraud_status?: string;
-  fraud_probability?: number;
-  risk_level?: string;
-  anomaly_score?: number;
-  prediction_factors?: Json;
-  analyzed_at?: string;
+  fraud_probability?: number | null;
+  risk_level?: string | null;
+  anomaly_score?: number | null;
+  prediction_factors?: Json | null;
   status?: string;
 }
 
@@ -149,17 +139,17 @@ export const useUpdateTransaction = () => {
         .select()
         .single();
 
-      if (error) {
-        throw error;
-      }
+      if (error) throw error;
 
       return data;
     },
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["transactions"] });
       queryClient.invalidateQueries({ queryKey: ["transaction-stats"] });
     },
-    onError: (error) => {
+
+    onError: (error: any) => {
       toast({
         title: "Error",
         description: error.message,

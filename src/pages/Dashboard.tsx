@@ -8,7 +8,7 @@ import { useTransactionStats } from "@/hooks/useTransactions";
 import Navbar from "@/components/layout/Navbar";
 import {
 
-  LogIn,
+  LogIn, 
 } from "lucide-react";
 const Dashboard = () => {
   const { data: stats, isLoading } = useTransactionStats();

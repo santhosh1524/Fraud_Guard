@@ -28,7 +28,7 @@ const transactionExample = {
   prediction: "Fraud",
   probability: 0.95,
   features: {
-    "Transaction Amount": "$15,000 (unusually high)",
+    "Transaction Amount": "₹15,000 (unusually high)",
     "Location": "Unknown (VPN detected)",
     "Device": "New device, first time use",
     "Time": "3:42 AM (unusual hour)",
@@ -216,7 +216,7 @@ const Explainability = () => {
             <ul className="mt-3 space-y-2 text-sm text-muted-foreground">
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-fraud mt-1.5 flex-shrink-0" />
-                <span>The transaction amount of <strong>$15,000</strong> is significantly higher than the user's typical spending pattern</span>
+                <span>The transaction amount of <strong>₹15,000</strong> is significantly higher than the user's typical spending pattern</span>
               </li>
               <li className="flex items-start gap-2">
                 <div className="w-1.5 h-1.5 rounded-full bg-fraud mt-1.5 flex-shrink-0" />

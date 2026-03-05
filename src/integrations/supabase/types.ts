@@ -1,4 +1,4 @@
-export type Json =
+﻿export type Json =
   | string
   | number
   | boolean
@@ -16,133 +16,111 @@ export type Database = {
     Tables: {
       profiles: {
         Row: {
-          avatar_url: string | null
-          created_at: string
+          auth_id: string | null
+          created_at: string | null
           email: string
-          full_name: string | null
           id: string
-          updated_at: string
-          user_id: string
+          password: string
+          readable_user_id: string | null
+          user_id: string | null
         }
         Insert: {
-          avatar_url?: string | null
-          created_at?: string
+          auth_id?: string | null
+          created_at?: string | null
           email: string
-          full_name?: string | null
           id?: string
-          updated_at?: string
-          user_id: string
+          password: string
+          readable_user_id?: string | null
+          user_id?: string | null
         }
         Update: {
-          avatar_url?: string | null
-          created_at?: string
+          auth_id?: string | null
+          created_at?: string | null
           email?: string
-          full_name?: string | null
           id?: string
-          updated_at?: string
-          user_id?: string
+          password?: string
+          readable_user_id?: string | null
+          user_id?: string | null
         }
         Relationships: []
       }
       transactions: {
         Row: {
           amount: number
-          analyzed_at: string | null
           anomaly_score: number | null
+          auth_id: string | null
           category: string | null
-          created_at: string
+          confidence: number | null
+          created_at: string | null
           device_type: string | null
           fraud_probability: number | null
-          fraud_status: string
+          fraud_status: string | null
           id: string
-          ip_address: string | null
           location: string | null
-          merchant: string | null
           prediction_factors: Json | null
           risk_level: string | null
-          status: string
+          status: string | null
           transaction_id: string
+          transaction_time: string
           transaction_type: string | null
-          user_id: string | null
         }
         Insert: {
           amount: number
-          analyzed_at?: string | null
           anomaly_score?: number | null
+          auth_id?: string | null
           category?: string | null
-          created_at?: string
+          confidence?: number | null
+          created_at?: string | null
           device_type?: string | null
           fraud_probability?: number | null
-          fraud_status?: string
+          fraud_status?: string | null
           id?: string
-          ip_address?: string | null
           location?: string | null
-          merchant?: string | null
           prediction_factors?: Json | null
           risk_level?: string | null
-          status?: string
-          transaction_id: string
+          status?: string | null
+          transaction_id?: string
+          transaction_time?: string
           transaction_type?: string | null
-          user_id?: string | null
         }
         Update: {
           amount?: number
-          analyzed_at?: string | null
           anomaly_score?: number | null
+          auth_id?: string | null
           category?: string | null
-          created_at?: string
+          confidence?: number | null
+          created_at?: string | null
           device_type?: string | null
           fraud_probability?: number | null
-          fraud_status?: string
+          fraud_status?: string | null
           id?: string
-          ip_address?: string | null
           location?: string | null
-          merchant?: string | null
           prediction_factors?: Json | null
           risk_level?: string | null
-          status?: string
+          status?: string | null
           transaction_id?: string
+          transaction_time?: string
           transaction_type?: string | null
-          user_id?: string | null
         }
-        Relationships: []
-      }
-      user_roles: {
-        Row: {
-          created_at: string
-          id: string
-          role: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          role?: Database["public"]["Enums"]["app_role"]
-          user_id?: string
-        }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "transactions_auth_id_fkey"
+            columns: ["auth_id"]
+            isOneToOne: false
+            referencedRelation: "profiles"
+            referencedColumns: ["auth_id"]
+          },
+        ]
       }
     }
     Views: {
       [_ in never]: never
     }
     Functions: {
-      has_role: {
-        Args: {
-          _role: Database["public"]["Enums"]["app_role"]
-          _user_id: string
-        }
-        Returns: boolean
-      }
+      generate_transaction_id: { Args: never; Returns: string }
     }
     Enums: {
-      app_role: "admin" | "analyst" | "user"
+      [_ in never]: never
     }
     CompositeTypes: {
       [_ in never]: never
@@ -269,8 +247,6 @@ export type CompositeTypes<
 
 export const Constants = {
   public: {
-    Enums: {
-      app_role: ["admin", "analyst", "user"],
-    },
+    Enums: {},
   },
 } as const
